@@ -35,8 +35,6 @@ public class ProductTO {
 		builder.append(productName);
 		builder.append(", price=");
 		builder.append(price);
-		builder.append(", imageURL=");
-		builder.append(imageURL);
 		builder.append(", categoryName=");
 		builder.append(categoryName);
 		builder.append("]");
@@ -56,13 +54,7 @@ public class ProductTO {
 		this.price = price;
 	}
 
-	public String getImageURL() {
-		return imageURL;
-	}
-
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
-	}
+	
 
 	public String getCategoryName() {
 		return categoryName;
@@ -72,7 +64,7 @@ public class ProductTO {
 		this.categoryName = categoryName;
 	}
 
-	private String imageURL;
+
 	
 	private String categoryName;
 

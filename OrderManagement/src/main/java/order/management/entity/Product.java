@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -17,6 +18,17 @@ public class Product {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+	@Lob
+	private byte[] productImage;
+	
+	public byte[] getProductImage() {
+		return productImage;
+	}
+
+	public void setProductImage(byte[] productImage) {
+		this.productImage = productImage;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -43,7 +55,7 @@ public class Product {
 		builder.append(", price=");
 		builder.append(price);
 		builder.append(", imageURL=");
-		builder.append(imageURL);
+		
 		builder.append(", category=");
 		builder.append(category);
 		builder.append("]");
@@ -66,13 +78,7 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getImageURL() {
-		return imageURL;
-	}
-
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
-	}
+	
 
 	public Category getCategory() {
 		return category;
@@ -82,7 +88,7 @@ public class Product {
 		this.category = category;
 	}
 
-	private String imageURL;
+	
 	
 	@ManyToOne
 	@JoinColumn(name="categoryName")

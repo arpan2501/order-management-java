@@ -1,5 +1,8 @@
 package order.management.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import order.management.ApplicationUserRepository;
@@ -132,27 +139,41 @@ public class MyController {
 	}
 
 	@PostMapping("/saveProduct")
-	public void saveNewProduct(@RequestBody ProductTO productTO) {
+	public void saveNewProduct(@RequestParam("productImage") MultipartFile productImage,
+			@RequestParam("productInfo") String productInfo
+	        ) throws IOException {
 
-		System.out.println(productTO);
-
+		
+		ProductTO productTO = new ObjectMapper().readValue(productInfo, ProductTO.class);
+		
 		Product product = modelMapper.map(productTO, Product.class);
-
-		System.out.println(product);
+		
+		product.setProductImage(productImage.getBytes());
+		
 		prodRepo.save(product);
 	}
 
-	@PostMapping("/updateProduct{id}")
-	public void updateExistingProduct(@RequestBody ProductTO productTO, @PathVariable Long id) {
+	@PostMapping("/updateProduct/{id}")
+	public void updateExistingProduct(@RequestParam(name="productImage",required=false) MultipartFile productImage,
+			@RequestParam("productInfo") String productInfo, @PathVariable Long id) throws IOException {
 
-		System.out.println(productTO);
-		if (prodRepo.existsById(id)) {
-			productTO.setId(id);
-			Product product = modelMapper.map(productTO, Product.class);
-
-			System.out.println(product);
-			prodRepo.save(product);
-		}
+		
+		ProductTO productTO = new ObjectMapper().readValue(productInfo, ProductTO.class);
+		
+		Product product = prodRepo.findById(id).get();
+		
+		product.setPrice(productTO.getPrice());
+		product.setProductName(productTO.getProductName());
+		product.setCategory(catRepo.findById(productTO.getCategoryName()).get());
+		
+		if(productImage!=null)
+		product.setProductImage(productImage.getBytes());
+	
+		
+		product.setId(id);
+		
+		prodRepo.save(product);
+		
 	}
 
 	@GetMapping("/createCart")
